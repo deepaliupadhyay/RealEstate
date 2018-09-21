@@ -1,0 +1,8 @@
+request
+Flask
+pymongo
+ssl
+certifi
+json
+pprint
+Response
