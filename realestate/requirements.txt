@@ -3,4 +3,4 @@ Flask
 pymongo
 certifi
 pprint
-
+gunicorn
