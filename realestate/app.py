@@ -68,7 +68,7 @@ def getOneArticle():
 
 
     #result = [data for data in mycol.find({"ZIP": zipcode}, {"_id": 0 }).limit(5)]
-    result = [data for data in mycol.find(query , {"_id": 0}).limit(5)]
+    result = [data for data in mycol.find(query , {"_id": 0}).limit(15)]
     if data:
         output= "Results found"
     else:
@@ -130,7 +130,7 @@ def housedata():
         print "selected operator {}".format('$' + "operator")
         query.update({'SQUARE FEET': {operator: sqft}})
 
-    property = mycol.find(query, {"_id": 0 }).limit(5)
+    property = mycol.find(query, {"_id": 0 }).limit(15)
     pprint(property)
 
     result = []
@@ -209,11 +209,11 @@ def getData():
 
     if x == False:
         query.update({'CITY': {'$regex': str, '$options': 'i'}})
-        outputdata = [data1 for data1 in mycol.find(query, {"_id": 0}).limit(5)]
+        outputdata = [data1 for data1 in mycol.find(query, {"_id": 0}).limit(15)]
 
     if x==True or len(outputdata) == 0:
         query['ADDRESS'] = {'$regex': str, '$options': 'i'}
-        outputdata = [data1 for data1 in mycol.find(query, {"_id": 0}).limit(5)]
+        outputdata = [data1 for data1 in mycol.find(query, {"_id": 0}).limit(15)]
     #if(filter=='baths'):
 
 
