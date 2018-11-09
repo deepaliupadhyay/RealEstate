@@ -23,9 +23,13 @@ def getOneArticle():
     beds = request.args.get('beds')
     beds_op = request.args.get('beds_op')
     price = request.args.get('price')
+
     price_op = request.args.get('price_op')
     sqft = request.args.get('sqft')
     sqft_op = request.args.get('sqft_op')
+    sortv = request.args.get('sortv')
+    sort_by= request.args.get('sort_by')
+
     print baths_op
     print baths
     print beds_op
@@ -34,48 +38,69 @@ def getOneArticle():
     print price
     print sqft_op
     print sqft
-
-    client = pymongo.MongoClient("mongodb://DJ1982:forgot@test-cluster-dj-shard-00-02-fkuxb.mongodb.net",
+    print sortv
+    print sort_by
+    client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
                                  ssl_ca_certs=certifi.where())
-    mydb = client.projectdb
-    mycol = mydb["projectData_0925"]
+    mydb = client.realestate
+    mycol = mydb["realEstateData"]
     x = ''
-
+    data = ''
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
 
     query = {"ZIP": zipcode}
     if baths != None:
         operator = op.get(baths_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'BATHS': {operator: baths}})
+        query.update({'BATHS': {operator: float(baths)}})
 
     if beds != None:
         operator = op.get(beds_op);
+        print operator
         print "selected operator {}".format('$' + "operator")
-        query.update({'BEDS': {operator: beds}})
+        query.update({'BEDS': {operator: int (beds)}})
 
     if price != None:
         operator = op.get(price_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'PRICE': {operator: price}})
+        query.update({'PRICE': {operator: float (price)}})
 
     if sqft != None:
         operator = op.get(sqft_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'SQUARE FEET': {operator: sqft}})
+        query.update({'SQUARE FEET': {operator: float(sqft)}})
 
 
+    print query
 
-    #result = [data for data in mycol.find({"ZIP": zipcode}, {"_id": 0 }).limit(5)]
-    result = [data for data in mycol.find(query , {"_id": 0}).limit(15)]
-    if data:
-        output= "Results found"
+    if sortv!= None:
+        if sortv == 'price':
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("PRICE", int(sort_by))]).limit(15)]
+        elif sortv == 'beds':
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BEDS", int(sort_by))]).limit(15)]
+        elif sortv == 'baths':
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BATHS", int(sort_by))]).limit(15)]
+        elif sortv == 'sqft':
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("SQUARE FEET", int(sort_by))]).limit(15)]
     else:
-        output="No Results Found"
+
+        result = [data for data in mycol.find(query, {"_id": 0}).limit(15)]
+
+       # result = [data for data in mycol.find(query, {"_id": 0}).sort({"PRICE" : 1}). limit(15)]
+
+
+   # print query
+    #result = [data for data in mycol.find({"ZIP": zipcode}, {"_id": 0 }).limit(5)]
+    #result = [data for data in mycol.find(query , {"_id": 0}).limit(15)]
+    #if data:
+    #    output= "Results found"
+    #else:
+    #    output="No Results Found"
 
 
     return Response(json.dumps(result),  mimetype='application/json')
+
 
 @app.route('/cordinate')
 def housedata():
