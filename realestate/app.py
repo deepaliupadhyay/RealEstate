@@ -7,7 +7,7 @@ import json
 from pprint import pprint
 from flask import Response
 import os
-
+from predict_price_knn_model import PredictPriceKNNModel
 app = Flask(__name__)
 
 
@@ -249,7 +249,16 @@ def getData():
 
     return Response(json.dumps(outputdata),  mimetype='application/json')
 
+@app.route('/price_prediction')
+def getPricePrediction():
+    zipcode = request.args.get('zipcode')
+    model = PredictPriceKNNModel()
+    predicted_price = model.customized_train_model(zip_code=94041, beds=4, baths=2, square_feet=1800, lot_size=3000,
+                                                   year_build=1985)
+    print "The predicted price for parameterized property is" + str(predicted_price)
+    return Response(str(predicted_price), mimetype='application/text')
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
 
