@@ -8,6 +8,8 @@ from pprint import pprint
 from flask import Response
 import os
 from predict_price_knn_model import PredictPriceKNNModel
+from flask import send_file
+
 app = Flask(__name__)
 
 
@@ -87,6 +89,8 @@ def getOneArticle():
 
         result = [data for data in mycol.find(query, {"_id": 0}).limit(15)]
 
+
+
        # result = [data for data in mycol.find(query, {"_id": 0}).sort({"PRICE" : 1}). limit(15)]
 
 
@@ -124,11 +128,11 @@ def housedata():
     print sqft
     pprint(longitude)
     pprint(latitude)
-    client = pymongo.MongoClient("mongodb://DJ1982:forgot@test-cluster-dj-shard-00-02-fkuxb.mongodb.net",
+    client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
                                  ssl_ca_certs=certifi.where())
-    mydb = client.projectdb
-    mycol = mydb["projectData_0925"]
+    mydb = client.realestate
+    mycol = mydb["realEstateData"]
 #    mycol.create_index([('BOUNDARY', pymongo.GEOSPHERE)], name='BOUNDARY', default_language='english')
     query = {"BOUNDARY": {
         "$nearSphere": {"$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
@@ -201,11 +205,11 @@ def getData():
     # return 'Hello ' + request.args['str']
     #else:
     #    return 'Hello John Doe'
-    client = pymongo.MongoClient("mongodb://DJ1982:forgot@test-cluster-dj-shard-00-02-fkuxb.mongodb.net",
+    client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
                                  ssl_ca_certs=certifi.where())
-    mydb = client.projectdb
-    mycol = mydb["projectData_0925"]
+    mydb = client.realestate
+    mycol = mydb["realEstateData"]
     x = any(c.isdigit() for c in str)
     print x
     outputdata = []
@@ -249,15 +253,28 @@ def getData():
 
     return Response(json.dumps(outputdata),  mimetype='application/json')
 
+@app.route('/getImage')
+def getImage():
+    # image_path = os.path.join(os.getcwd(), "../images/Condo/house1/1.jpg")
+    image_path = "./images/Condo/house1/1.jpg"
+    print ("Image path -- {0}".format(image_path))
+    return send_file(image_path, mimetype='image/jpg')
+
+
 @app.route('/price_prediction')
 def getPricePrediction():
-    zipcode = request.args.get('zipcode')
-    model = PredictPriceKNNModel()
-    predicted_price = model.customized_train_model(zip_code=94041, beds=4, baths=2, square_feet=1800, lot_size=3000,
-                                                   year_build=1985)
-    print "The predicted price for parameterized property is" + str(predicted_price)
-    return Response(str(predicted_price), mimetype='application/text')
+    zip_code = request.args.get('zip_code')
+    beds = request.args.get('beds')
+    baths= request.args.get('baths')
+    square_feet = request.args.get('square_feet')
+    lot_size = request.args.get('lot_size')
+    year_build = request.args.get('year_build')
 
+    model = PredictPriceKNNModel()
+    predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
+                                                   lot_size=lot_size,year_build=year_build)
+    print "The predicted price for parameterized property is" + str(predicted_price)
+    return Response(str(predicted_price), mimetype='text')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
