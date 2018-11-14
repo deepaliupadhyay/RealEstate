@@ -1,61 +1,71 @@
 from PIL import Image
 
 import os
+import random
 
 
+class ImageHelper:
+    images_directory = ""
 
-file1= os.path.join('./images/Condo/house1/1.jpg')  # type: Union[Union[str, unicode], Any]
-file2= os.path.join('./images/Condo/house1/2.jpg')
-file3= os.path.join('./images/Condo/house1/3.jpg')
-file4= os.path.join('./images/Condo/house1/4.jpg')
-file5= os.path.join('./images/Condo/house1/5.jpg')
+    def __init__(self):
+        image_source_directory = os.getcwd()
+        global images_directory
+        images_directory = os.path.join(image_source_directory, "images")
 
-def merge_images(file1, file2) :
+    # Property ID will be provided as the parameter
+    def get_images_list(self, property_id=123):
+        # Fetch property category from DB
 
+        property_category = "Condo"
+        global images_directory
+        image_directory_path = os.path.join(images_directory, property_category)
+        folders = []
+        for files in os.listdir(image_directory_path):
+            if not files.startswith("."):
+                folders.append(files)
 
-    image1 = Image.open(file1)
-    image2 = Image.open(file2)
-    image3 = Image.open(file3)
-    image4 = Image.open(file4)
-    image5 = Image.open(file5)
+        selected_property_directory = random.choice(folders)
 
-    (width1, height1) = image1.size
-    (width2, height2) = image2.size
-    (width3, height3) = image3.size
-    (width4, height4) = image4.size
-    (width5, height5) = image5.size
+        current_property_images = os.path.join(image_directory_path, selected_property_directory)
+        print current_property_images
 
-    result_width = width1 + width2 + width3 + width4 + width5
-    result_height = max(height1, height2, height3, height4, height5)
+        list_of_images = []
+        for images_name in os.listdir(current_property_images):
+            if not images_name.startswith("."):
+                list_of_images.append(images_name)
+        print list_of_images
+        return list_of_images, selected_property_directory
 
-    print ("width {0} height {1}".format(width1, height1))
-    print ("width {0} height {1}".format(width2, height2))
-    print ("width {0} height {1}".format(width3, height3))
-    print ("width {0} height {1}".format(width4, height4))
-    print ("width {0} height {1}".format(width5, height5))
+    def stitch_images(self, property_category="Condo"):
+        global images_directory
+        image_directory_path = os.path.join(images_directory, property_category)
 
+        list_of_images, selected_property_directory = self.get_images_list()
+        open_images = {}
+        total_width = 0
+        max_height = 0
 
-    result = Image.new('RGB', (result_width, result_height))
-    result.paste(im=image1, box=(0, 0))
-    result.paste(im=image2, box=(width1, 0))
-    result.paste(im=image3, box=(width1 + width2, 0))
-    result.paste(im=image4, box=(width1 + width2 + width3, 0))
-    result.paste(im=image5, box=(width1 + width2 + width3 + width4, 0))
-    return result
+        idx = 0
+        for image in list_of_images:
+            image_path = os.path.join(image_directory_path, selected_property_directory, image)
+            open_image = Image.open(image_path)
+            (width, height) = open_image.size
+            open_images[(idx, width, height)] = open_image
+            idx += 1
+            total_width += width
+            max_height = max(max_height, height)
+        print("Total width {0} and height {1}".format(total_width, max_height))
+
+        result = Image.new('RGB', (total_width, max_height))
+        start_idx = 0
+        for k, v in open_images.items():
+            result.paste(im=v, box=(start_idx, 0))
+            start_idx += k[1]
+        return result, len(list_of_images)
 
 
 if __name__ == "__main__":
-    print (__name__)
-    # file_dir = os.path.join(os.getcwd(), "")
-    new_image = merge_images(file1, file2)
+    img_helper = ImageHelper()
+    new_image, no_of_images = img_helper.stitch_images()
     new_image.save('./images/merge.jpg')
-    image1 = new_image.crop(box=(0,0,1000,662))
-    image2 = new_image.crop(box=(1000, 0, 1000*2, 662))
-    image3 = new_image.crop(box=(1000*2, 0, 1000 * 3, 662))
-    image4 = new_image.crop(box=(1000*3, 0, 1000 * 4, 662))
-    image5 = new_image.crop(box=(1000*4, 0, 1000 * 5, 662))
-    image1.save('./images/crop1.jpg')
-    image2.save('./images/crop2.jpg')
-    image3.save('./images/crop3.jpg')
-    image4.save('./images/crop4.jpg')
-    image5.save('./images/crop5.jpg')
+    print no_of_images

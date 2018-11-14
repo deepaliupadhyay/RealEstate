@@ -10,6 +10,9 @@ import os
 from predict_price_knn_model import PredictPriceKNNModel
 from flask import send_file
 
+from ImagesHelper import ImageHelper
+import io
+
 app = Flask(__name__)
 
 
@@ -275,6 +278,28 @@ def getPricePrediction():
                                                    lot_size=lot_size,year_build=year_build)
     print "The predicted price for parameterized property is" + str(predicted_price)
     return Response(str(predicted_price), mimetype='text')
+
+@app.route('/test_image')
+def get_test_image():
+    img_helper = ImageHelper()
+    new_image, no_of_images = img_helper.stitch_images()
+    new_image.save('./images/merge.jpg')
+    print no_of_images
+
+    return send_file("./images/merge.jpg", mimetype='image/gif')
+    # return send_file(
+    #     io.BytesIO(new_image),
+    #     mimetype='image/jpeg',
+    #     as_attachment=True,
+    #     attachment_filename='test.jpg')
+    #
+
+    # image_binary = read_image(pid)
+    # response = make_response(image_binary)
+    # response.headers.set('Content-Type', 'image/jpeg')
+    # response.headers.set(
+    #     'Content-Disposition', 'attachment', filename='%s.jpg' % pid)
+    # return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
