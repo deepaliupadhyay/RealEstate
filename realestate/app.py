@@ -22,6 +22,7 @@ def home():
 
 @app.route('/zdata')
 def getOneArticle():
+    print "Test"
     zipcode = request.args.get('zipcode')
     baths = request.args.get('baths')
     baths_op = request.args.get('baths_op')
