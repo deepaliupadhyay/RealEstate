@@ -92,6 +92,8 @@ def getOneArticle():
 
         result = [data for data in mycol.find(query, {"_id": 0}).limit(15)]
 
+    img_helper = ImageHelper()
+    result = img_helper.get_images_for_property(result)
 
 
        # result = [data for data in mycol.find(query, {"_id": 0}).sort({"PRICE" : 1}). limit(15)]
