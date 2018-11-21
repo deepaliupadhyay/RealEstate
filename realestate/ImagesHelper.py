@@ -12,12 +12,14 @@ class ImageHelper:
         global images_directory
         images_directory = os.path.join(image_source_directory, "images")
 
-    def get_property__images_url_list(self, property_category,beds):
+    def get_property_images_url_list(self, property_category, beds):
         # Fetch property category from DB
 
         global images_directory
         if property_category == "Condo/Co-op":
             property_category = "Condo"
+        print("image_directory - {0}, property_category - {1}, no of beds - {2}".format(images_directory,
+                                                                                        property_category, beds))
         image_directory_path = os.path.join(images_directory, property_category)
         folders = []
         for files in os.listdir(image_directory_path):
@@ -25,12 +27,12 @@ class ImageHelper:
                 folders.append(files)
 
         # selected_property_directory = random.choice(folders)
-        if beds <=3:
+        if beds <= 3:
             selected_property_directory = "house"+str(beds)
         else:
             selected_property_directory = "house4"
         current_property_images = os.path.join(image_directory_path, selected_property_directory)
-        # print "current property images "+current_property_images
+        print "Current property images " + current_property_images
 
         list_of_images = []
         for images_name in os.listdir(current_property_images):
@@ -41,8 +43,8 @@ class ImageHelper:
 
     def get_images_for_property(self, results):
         for result in results:
-            images_url, selected_directory = self.get_property_images_url_list(result["PROPERTY TYPE"],result["BEDS"])
-            folder_path = "images."
+            images_url, selected_directory = self.get_property_images_url_list(result["PROPERTY TYPE"], result["BEDS"])
+            # folder_path = "images."
             result["image_url"] = images_url
         return results
 
