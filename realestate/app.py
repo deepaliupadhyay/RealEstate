@@ -15,6 +15,8 @@ import io
 
 app = Flask(__name__)
 
+img_helper = ImageHelper()
+
 
 @app.route('/')
 def home():
@@ -34,17 +36,8 @@ def getOneArticle():
     sqft_op = request.args.get('sqft_op')
     sortv = request.args.get('sortv')
     sort_by= request.args.get('sort_by')
-
-    print baths_op
-    print baths
-    print beds_op
-    print beds
-    print price_op
-    print price
-    print sqft_op
-    print sqft
-    print sortv
-    print sort_by
+    skip_rec = request.args.get('skip')
+    print "skip_rec ", skip_rec
     client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
                                  ssl_ca_certs=certifi.where())
@@ -76,37 +69,20 @@ def getOneArticle():
         print "selected operator {}".format('$' + "operator")
         query.update({'SQUARE FEET': {operator: float(sqft)}})
 
-
-    print query
-
+    no_of_rec_to_skip = int(skip_rec)
     if sortv!= None:
         if sortv == 'price':
-            result = [data for data in mycol.find(query, {"_id": 0}).sort([("PRICE", int(sort_by))]).limit(15)]
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("PRICE", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
         elif sortv == 'beds':
-            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BEDS", int(sort_by))]).limit(15)]
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BEDS", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
         elif sortv == 'baths':
-            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BATHS", int(sort_by))]).limit(15)]
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("BATHS", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
         elif sortv == 'sqft':
-            result = [data for data in mycol.find(query, {"_id": 0}).sort([("SQUARE FEET", int(sort_by))]).limit(15)]
+            result = [data for data in mycol.find(query, {"_id": 0}).sort([("SQUARE FEET", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
     else:
+        result = [data for data in mycol.find(query, {"_id": 0}).skip(no_of_rec_to_skip).limit(15)]
 
-        result = [data for data in mycol.find(query, {"_id": 0}).limit(0,15)]
-
-    img_helper = ImageHelper()
     result = img_helper.get_images_for_property(result)
-
-
-       # result = [data for data in mycol.find(query, {"_id": 0}).sort({"PRICE" : 1}). limit(15)]
-
-
-   # print query
-    #result = [data for data in mycol.find({"ZIP": zipcode}, {"_id": 0 }).limit(5)]
-    #result = [data for data in mycol.find(query , {"_id": 0}).limit(15)]
-    #if data:
-    #    output= "Results found"
-    #else:
-    #    output="No Results Found"
-
 
     return Response(json.dumps(result),  mimetype='application/json')
 
@@ -171,6 +147,8 @@ def housedata():
     for document in property:
        result.append(document)
 
+    img_helper.get_images_for_property(result)
+
     pprint(result)
 
     if property:
@@ -193,6 +171,7 @@ def getData():
     price_op = request.args.get('price_op')
     sqft = request.args.get('sqft')
     sqft_op = request.args.get('sqft_op')
+    skip_rec = request.args.get('skip')
 
     #rooms
     print str
@@ -256,6 +235,7 @@ def getData():
     #if outputdata is None :
     #    finaldata = [data1 for data1 in mycol.find({'ADDRESS': {'$regex': '.*str.*'}}, {"_id": 0}).limit(5)]
 
+    img_helper.get_images_for_property(outputdata)
     return Response(json.dumps(outputdata),  mimetype='application/json')
 
 @app.route('/getImage')
