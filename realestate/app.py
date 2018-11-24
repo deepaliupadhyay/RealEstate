@@ -7,7 +7,7 @@ import json
 from pprint import pprint
 from flask import Response
 import os
-# from predict_price_knn_model import PredictPriceKNNModel
+from predict_price_knn_model import PredictPriceKNNModel
 from flask import send_file
 
 from ImagesHelper import ImageHelper
@@ -90,7 +90,7 @@ def getOneArticle():
             result = [data for data in mycol.find(query, {"_id": 0}).sort([("SQUARE FEET", int(sort_by))]).limit(15)]
     else:
 
-        result = [data for data in mycol.find(query, {"_id": 0}).limit(15)]
+        result = [data for data in mycol.find(query, {"_id": 0}).limit(0,15)]
 
     img_helper = ImageHelper()
     result = img_helper.get_images_for_property(result)
@@ -266,20 +266,20 @@ def getImage():
     return send_file(image_path, mimetype='image/jpg')
 
 
-# @app.route('/price_prediction')
-# def getPricePrediction():
-#     zip_code = request.args.get('zip_code')
-#     beds = request.args.get('beds')
-#     baths= request.args.get('baths')
-#     square_feet = request.args.get('square_feet')
-#     lot_size = request.args.get('lot_size')
-#     year_build = request.args.get('year_build')
-#
-#     model = PredictPriceKNNModel()
-#     predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
-#                                                    lot_size=lot_size,year_build=year_build)
-#     print "The predicted price for parameterized property is" + str(predicted_price)
-#     return Response(str(predicted_price), mimetype='text')
+@app.route('/price_prediction')
+def getPricePrediction():
+    zip_code = request.args.get('zip_code')
+    beds = request.args.get('beds')
+    baths= request.args.get('baths')
+    square_feet = request.args.get('square_feet')
+    lot_size = request.args.get('lot_size')
+    year_build = request.args.get('year_build')
+
+    model = PredictPriceKNNModel()
+    predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
+                                                   lot_size=lot_size,year_build=year_build)
+    print "The predicted price for parameterized property is" + str(predicted_price)
+    return Response(str(predicted_price), mimetype='text')
 
 @app.route('/property_image')
 def get_property_image():
