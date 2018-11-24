@@ -7,7 +7,7 @@ import json
 from pprint import pprint
 from flask import Response
 import os
-from predict_price_knn_model import PredictPriceKNNModel
+# from predict_price_knn_model import PredictPriceKNNModel
 from flask import send_file
 
 from ImagesHelper import ImageHelper
@@ -22,7 +22,6 @@ def home():
 
 @app.route('/zdata')
 def getOneArticle():
-    print "Test"
     zipcode = request.args.get('zipcode')
     baths = request.args.get('baths')
     baths_op = request.args.get('baths_op')
@@ -267,42 +266,26 @@ def getImage():
     return send_file(image_path, mimetype='image/jpg')
 
 
-@app.route('/price_prediction')
-def getPricePrediction():
-    zip_code = request.args.get('zip_code')
-    beds = request.args.get('beds')
-    baths= request.args.get('baths')
-    square_feet = request.args.get('square_feet')
-    lot_size = request.args.get('lot_size')
-    year_build = request.args.get('year_build')
+# @app.route('/price_prediction')
+# def getPricePrediction():
+#     zip_code = request.args.get('zip_code')
+#     beds = request.args.get('beds')
+#     baths= request.args.get('baths')
+#     square_feet = request.args.get('square_feet')
+#     lot_size = request.args.get('lot_size')
+#     year_build = request.args.get('year_build')
+#
+#     model = PredictPriceKNNModel()
+#     predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
+#                                                    lot_size=lot_size,year_build=year_build)
+#     print "The predicted price for parameterized property is" + str(predicted_price)
+#     return Response(str(predicted_price), mimetype='text')
 
-    model = PredictPriceKNNModel()
-    predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
-                                                   lot_size=lot_size,year_build=year_build)
-    print "The predicted price for parameterized property is" + str(predicted_price)
-    return Response(str(predicted_price), mimetype='text')
+@app.route('/property_image')
+def get_property_image():
+    image_url = request.args.get('image_url')
+    return send_file(image_url, mimetype='image/jpg')
 
-@app.route('/test_image')
-def get_test_image():
-    img_helper = ImageHelper()
-    new_image, no_of_images = img_helper.stitch_images()
-    new_image.save('./images/merge.jpg')
-    print no_of_images
-
-    return send_file("./images/merge.jpg", mimetype='image/gif')
-    # return send_file(
-    #     io.BytesIO(new_image),
-    #     mimetype='image/jpeg',
-    #     as_attachment=True,
-    #     attachment_filename='test.jpg')
-    #
-
-    # image_binary = read_image(pid)
-    # response = make_response(image_binary)
-    # response.headers.set('Content-Type', 'image/jpeg')
-    # response.headers.set(
-    #     'Content-Disposition', 'attachment', filename='%s.jpg' % pid)
-    # return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
