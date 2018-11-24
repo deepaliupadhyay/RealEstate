@@ -7,7 +7,7 @@ import json
 from pprint import pprint
 from flask import Response
 import os
-# from predict_price_knn_model import PredictPriceKNNModel
+from predict_price_knn_model import PredictPriceKNNModel
 from flask import send_file
 
 from ImagesHelper import ImageHelper
@@ -232,21 +232,21 @@ def getImage():
     print ("Image path -- {0}".format(image_path))
     return send_file(image_path, mimetype='image/jpg')
 
-#
-# @app.route('/price_prediction')
-# def getPricePrediction():
-#     zip_code = request.args.get('zip_code')
-#     beds = request.args.get('beds')
-#     baths= request.args.get('baths')
-#     square_feet = request.args.get('square_feet')
-#     lot_size = request.args.get('lot_size')
-#     year_build = request.args.get('year_build')
-#
-#     model = PredictPriceKNNModel()
-#     predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
-#                                                    lot_size=lot_size,year_build=year_build)
-#     print "The predicted price for parameterized property is" + str(predicted_price)
-#     return Response(str(predicted_price), mimetype='text')
+
+@app.route('/price_prediction')
+def getPricePrediction():
+    zip_code = request.args.get('zip_code')
+    beds = request.args.get('beds')
+    baths= request.args.get('baths')
+    square_feet = request.args.get('square_feet')
+    lot_size = request.args.get('lot_size')
+    year_build = request.args.get('year_build')
+
+    model = PredictPriceKNNModel()
+    predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
+                                                   lot_size=lot_size,year_build=year_build)
+    print "The predicted price for parameterized property is" + str(predicted_price)
+    return Response(str(predicted_price), mimetype='text')
 
 @app.route('/property_image')
 def get_property_image():
