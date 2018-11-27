@@ -23,7 +23,7 @@ class ImageHelper:
             property_category ="Townhouse"
         else:
             property_category = "Single Family Residential"
-            
+
         image_directory_path = os.path.join(images_directory, property_category)
 
         folders = []
