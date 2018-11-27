@@ -19,6 +19,11 @@ class ImageHelper:
         global images_directory
         if property_category == "Condo/Co-op":
             property_category = "Condo"
+        elif property_category == "Townhouse":
+            property_category ="Townhouse"
+        else:
+            property_category = "Single Family Residential"
+            
         image_directory_path = os.path.join(images_directory, property_category)
 
         folders = []
