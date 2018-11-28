@@ -29,7 +29,6 @@ def getOneArticle():
     beds = request.args.get('beds')
     beds_op = request.args.get('beds_op')
     min_price = request.args.get('min_price')
-
     max_price = request.args.get('max_price')
     min_sqft = request.args.get('min_sqft')
     max_sqft = request.args.get('max_sqft')
@@ -58,22 +57,34 @@ def getOneArticle():
         print "selected operator {}".format('$' + "operator")
         query.update({'BEDS': {operator: int (beds)}})
 
-    if min_price != None:
+    if min_price != None and max_price != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'PRICE': {operator1: float (min_price), operator2: float (max_price)}})
+
+    elif min_price != None:
         operator = op.get('gt');
         print "selected operator {}".format('$' + "operator")
         query.update({'PRICE': {operator: float (min_price)}})
 
-    if max_price != None:
+    elif max_price != None:
         operator = op.get('lt');
         print "selected operator {}".format('$' + "operator")
         query.update({'PRICE': {operator: float (max_price)}})
 
-    if min_sqft != None:
+    if min_sqft != None and max_sqft != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator1: float (min_sqft), operator2: float (max_sqft)}})
+
+    elif min_sqft != None:
         operator = op.get('gt');
         print "selected operator {}".format('$' + "operator")
         query.update({'SQUARE FEET': {operator: float(min_sqft)}})
 
-    if max_sqft != None:
+    elif max_sqft != None:
         operator = op.get('lt');
         print "selected operator {}".format('$' + "operator")
         query.update({'SQUARE FEET': {operator: float(max_sqft)}})
@@ -104,21 +115,11 @@ def housedata():
     baths_op = request.args.get('baths_op')
     beds = request.args.get('beds')
     beds_op = request.args.get('beds_op')
-    price = request.args.get('price')
-    price_op = request.args.get('price_op')
-    sqft = request.args.get('sqft')
-    sqft_op = request.args.get('sqft_op')
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
+    min_sqft = request.args.get('min_sqft')
+    max_sqft = request.args.get('max_sqft')
 
-    print baths_op
-    print baths
-    print beds_op
-    print beds
-    print price_op
-    print price
-    print sqft_op
-    print sqft
-    pprint(longitude)
-    pprint(latitude)
     client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
                                  ssl_ca_certs=certifi.where())
@@ -128,7 +129,7 @@ def housedata():
     #mycol.create_index([('BOUNDARY', pymongo.GEOSPHERE)], name='BOUNDARY', default_language='english')
     query = {"BOUNDARY": {
         "$nearSphere": {"$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
-                        "$maxDistance": 1000}}}
+                        "$maxDistance": 8000}}}
 
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
     if baths != None:
@@ -141,15 +142,40 @@ def housedata():
         print "selected operator {}".format('$' + "operator")
         query.update({'BEDS': {operator: beds}})
 
-    if price != None:
-        operator = op.get(price_op);
-        print "selected operator {}".format('$' + "operator")
-        query.update({'PRICE': {operator: price}})
+    # if min_price != None && max_price != None
 
-    if sqft != None:
-        operator = op.get(sqft_op);
+    if min_price != None and max_price != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
         print "selected operator {}".format('$' + "operator")
-        query.update({'SQUARE FEET': {operator: sqft}})
+        query.update({'PRICE': {operator1: float (min_price), operator2: float (max_price)}})
+
+    elif min_price != None:
+        operator = op.get('gt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'PRICE': {operator: float (min_price)}})
+
+    elif max_price != None:
+        operator = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'PRICE': {operator: float (max_price)}})
+
+    if min_sqft != None and max_sqft != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator1: float (min_sqft), operator2: float (max_sqft)}})
+
+    elif min_sqft != None:
+        operator = op.get('gt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(min_sqft)}})
+
+    elif max_sqft != None:
+        operator = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(max_sqft)}})
+
 
 
     property = mycol.find(query, {"_id": 0 }).limit(15)
@@ -179,10 +205,10 @@ def getData():
     baths_op = request.args.get('baths_op')
     beds = request.args.get('beds')
     beds_op = request.args.get('beds_op')
-    price = request.args.get('price')
-    price_op = request.args.get('price_op')
-    sqft = request.args.get('sqft')
-    sqft_op = request.args.get('sqft_op')
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
+    min_sqft = request.args.get('min_sqft')
+    max_sqft = request.args.get('max_sqft')
     skip_rec = request.args.get('skip')
 
     no_of_rec_to_skip = int(skip_rec)
@@ -207,15 +233,38 @@ def getData():
         print "selected operator {}".format('$' + "operator")
         query.update({'BEDS': {operator: beds}})
 
-    if price != None:
-        operator = op.get(price_op);
+    if min_price != None and max_price != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
         print "selected operator {}".format('$' + "operator")
-        query.update({'PRICE': {operator: price}})
+        query.update({'PRICE': {operator1: float (min_price), operator2: float (max_price)}})
 
-    if sqft != None:
-        operator = op.get(sqft_op);
+    elif min_price != None:
+        operator = op.get('gt');
         print "selected operator {}".format('$' + "operator")
-        query.update({'SQUARE FEET': {operator: sqft}})
+        query.update({'PRICE': {operator: float (min_price)}})
+
+    elif max_price != None:
+        operator = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'PRICE': {operator: float (max_price)}})
+
+    if min_sqft != None and max_sqft != None:
+        operator1 = op.get('gt');
+        operator2 = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator1: float (min_sqft), operator2: float (max_sqft)}})
+
+    elif min_sqft != None:
+        operator = op.get('gt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(min_sqft)}})
+
+    elif max_sqft != None:
+        operator = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(max_sqft)}})
+
 
     if x == False:
         query.update({'CITY': {'$regex': str, '$options': 'i'}})
