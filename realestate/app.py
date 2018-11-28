@@ -28,11 +28,11 @@ def getOneArticle():
     baths_op = request.args.get('baths_op')
     beds = request.args.get('beds')
     beds_op = request.args.get('beds_op')
-    price = request.args.get('price')
+    min_price = request.args.get('min_price')
 
-    price_op = request.args.get('price_op')
-    sqft = request.args.get('sqft')
-    sqft_op = request.args.get('sqft_op')
+    max_price = request.args.get('max_price')
+    min_sqft = request.args.get('min_sqft')
+    max_sqft = request.args.get('max_sqft')
     sortv = request.args.get('sortv')
     sort_by= request.args.get('sort_by')
     skip_rec = request.args.get('skip')
@@ -58,15 +58,25 @@ def getOneArticle():
         print "selected operator {}".format('$' + "operator")
         query.update({'BEDS': {operator: int (beds)}})
 
-    if price != None:
-        operator = op.get(price_op);
+    if min_price != None:
+        operator = op.get('gt');
         print "selected operator {}".format('$' + "operator")
-        query.update({'PRICE': {operator: float (price)}})
+        query.update({'PRICE': {operator: float (min_price)}})
 
-    if sqft != None:
-        operator = op.get(sqft_op);
+    if max_price != None:
+        operator = op.get('lt');
         print "selected operator {}".format('$' + "operator")
-        query.update({'SQUARE FEET': {operator: float(sqft)}})
+        query.update({'PRICE': {operator: float (max_price)}})
+
+    if min_sqft != None:
+        operator = op.get('gt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(min_sqft)}})
+
+    if max_sqft != None:
+        operator = op.get('lt');
+        print "selected operator {}".format('$' + "operator")
+        query.update({'SQUARE FEET': {operator: float(max_sqft)}})
 
     no_of_rec_to_skip = int(skip_rec)
     if sortv!= None:
