@@ -128,7 +128,7 @@ def housedata():
     #mycol.create_index([('BOUNDARY', pymongo.GEOSPHERE)], name='BOUNDARY', default_language='english')
     query = {"BOUNDARY": {
         "$nearSphere": {"$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
-                        "$maxDistance": 5}}}
+                        "$maxDistance": 1000}}}
 
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
     if baths != None:
