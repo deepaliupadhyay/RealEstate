@@ -35,12 +35,14 @@ class PredictPriceKNNModel:
         data = pd.read_csv(file_name, sep=',', encoding='utf-8')
         print(data.columns)
         data = pd.DataFrame(data=data, columns=[
-            'SALE TYPE', 'property_type', 'STATE', 'zip', 'PRICE', 'beds', 'baths',
+            #'SALE TYPE',
+             'property_type', #'STATE',
+            'zip', 'PRICE', 'beds', 'baths',
             'sq_ft',  # 'lot_size',
             'year_built', 'days_on_market',
             'price_per_sq_ft',
-            'cost_of_living', 'Housing', 'Crime',
-            'State', 'Weather', 'Amenities', 'Education', 'Employment',
+            #'cost_of_living', 'Housing', 'Crime',
+            #'State', 'Weather', 'Amenities', 'Education', 'Employment',
             'Livability'])
 
         print("Total records in dataset - {0}".format(data.shape))
