@@ -61,8 +61,8 @@ class PredictPriceKNNModel:
         data = data.loc[
             (data['property_type'] == 'Single Family Residential') | (data['property_type'] == 'Townhouse') | (
                         data['property_type'] == 'Condo/Co-op')].copy()
-        #data = data.loc[(data['sq_ft'] < 4400)].copy()
-        data = data.loc[(data['sq_ft'] < float(square_feet_var) + 200)].copy()
+        data = data.loc[(data['sq_ft'] < 4400)].copy()
+        #data = data.loc[(data['sq_ft'] < float(square_feet_var) + 200)].copy()
 
 
         print("Records after Winsoring - {0}".format(data.shape))
