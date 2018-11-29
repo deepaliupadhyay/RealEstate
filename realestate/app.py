@@ -293,16 +293,16 @@ def getImage():
 
 @app.route('/price_prediction')
 def getPricePrediction():
-    zip_code = request.args.get('zip_code')
+    zip = request.args.get('zip')
     beds = request.args.get('beds')
-    baths= request.args.get('baths')
-    square_feet = request.args.get('square_feet')
-    lot_size = request.args.get('lot_size')
-    year_build = request.args.get('year_build')
+    sq_ft = request.args.get('sq_ft')
+    year_built = request.args.get('year_built')
+    baths =request.args.get('baths')
+    price_per_sq_ft = request.args.get('price')
 
     model = PredictPriceKNNModel()
-    predicted_price = model.customized_train_model(zip_code=zip_code, beds=beds, baths=baths, square_feet=square_feet,
-                                                   lot_size=lot_size,year_build=year_build)
+    predicted_price = model.customized_train_model(zip_code=zip, beds=beds, baths=baths, square_feet=sq_ft,
+                                                   year_build=year_built, price_per_sq_ft=price_per_sq_ft)
     print "The predicted price for parameterized property is" + str(predicted_price)
     return Response(str(predicted_price), mimetype='text')
 
