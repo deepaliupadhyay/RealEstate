@@ -36,7 +36,7 @@ class PredictPriceKNNModel:
         print(data.columns)
         data = pd.DataFrame(data=data, columns=[
             #'SALE TYPE',
-             'property_type', #'STATE',
+             'property_type', 'STATE',
             'zip', 'PRICE', 'beds', 'baths',
             'sq_ft',  # 'lot_size',
             'year_built', 'days_on_market',
