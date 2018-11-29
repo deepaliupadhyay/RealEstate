@@ -304,7 +304,14 @@ def getPricePrediction():
     predicted_price = model.customized_train_model(zip_code=zip, beds=beds, baths=baths, square_feet=sq_ft,
                                                    year_build=year_built)
     print "The predicted price for parameterized property is" + str(predicted_price)
-    return Response(str(predicted_price), mimetype='text')
+    print type(str(predicted_price))
+    predicted_price=round(predicted_price,2)
+    #return Response(str(predicted_price), mimetype='text')
+    #return Response(json.dumps(str(predicted_price)),  mimetype='application/json')
+    return Response(json.dumps({
+        'PREDICTED_PRICE': str(predicted_price)
+    }), mimetype=u'application/json')
+
 
 @app.route('/property_image')
 def get_property_image():
