@@ -118,11 +118,11 @@ class PredictPriceKNNModel:
 
 
 
-        regression = RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=5,
+        regression = RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=90,
                                            max_leaf_nodes=None, min_impurity_decrease=0.0,
                                            min_impurity_split=None, min_samples_leaf=3,
                                            min_samples_split=8, min_weight_fraction_leaf=0.0,
-                                           n_estimators=5, n_jobs=-1, oob_score=False, random_state=None,
+                                           n_estimators=1000, n_jobs=-1, oob_score=False, random_state=None,
                                            verbose=0, warm_start=False)
         regression.fit(X_train, y_train.values.ravel())
         predict_property_price = self.get_pd_for_predict_price(zip_code, beds, baths, square_feet , year_build, price_per_sq_ft)
