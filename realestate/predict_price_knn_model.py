@@ -27,7 +27,7 @@ class PredictPriceKNNModel:
 
 
 
-    def read_data(self):
+    def read_data(self, square_feet_var):
         file_name = os.path.join(os.getcwd(), "price_prediction_data_v1.csv")
 
         print("Path to access csv file to train model" + file_name)
@@ -61,7 +61,9 @@ class PredictPriceKNNModel:
         data = data.loc[
             (data['property_type'] == 'Single Family Residential') | (data['property_type'] == 'Townhouse') | (
                         data['property_type'] == 'Condo/Co-op')].copy()
-        data = data.loc[(data['sq_ft'] < 4400)].copy()
+        #data = data.loc[(data['sq_ft'] < 4400)].copy()
+        data = data.loc[(data['sq_ft'] < float(square_feet_var) + 200)].copy()
+
 
         print("Records after Winsoring - {0}".format(data.shape))
         all_data_na = (data.isnull().sum() / len(data)) * 100
@@ -91,7 +93,7 @@ class PredictPriceKNNModel:
 
 
     def customized_train_model(self, zip_code, beds, baths, square_feet, year_build, price_per_sq_ft):
-        data = self.read_data()
+        data = self.read_data(square_feet)
 
         print("Finally total number of records to be used for train model" + str(data.shape))
 
