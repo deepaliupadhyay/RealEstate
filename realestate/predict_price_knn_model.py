@@ -111,7 +111,7 @@ class PredictPriceKNNModel:
             #'price_per_sq_ft'
         ])
 
-        X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.3, random_state=8456)
+        X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.0, random_state=8456)
         print("Shape of X_train {0}", X_train.shape)
         print("Shape of X_test {0}", X_test.shape)
         print("Shape of y_train {0}", y_train.shape)
