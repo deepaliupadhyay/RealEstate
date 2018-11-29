@@ -298,11 +298,11 @@ def getPricePrediction():
     sq_ft = request.args.get('sq_ft')
     year_built = request.args.get('year_built')
     baths =request.args.get('baths')
-    price_per_sq_ft = request.args.get('price')
+
 
     model = PredictPriceKNNModel()
     predicted_price = model.customized_train_model(zip_code=zip, beds=beds, baths=baths, square_feet=sq_ft,
-                                                   year_build=year_built, price_per_sq_ft=price_per_sq_ft)
+                                                   year_build=year_built)
     print "The predicted price for parameterized property is" + str(predicted_price)
     return Response(str(predicted_price), mimetype='text')
 
@@ -314,4 +314,3 @@ def get_property_image():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-

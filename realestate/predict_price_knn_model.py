@@ -92,17 +92,17 @@ class PredictPriceKNNModel:
         return data
 
 
-    def customized_train_model(self, zip_code, beds, baths, square_feet, year_build, price_per_sq_ft):
+    def customized_train_model(self, zip_code, beds, baths, square_feet, year_build):
         data = self.read_data(square_feet)
 
         print("Finally total number of records to be used for train model" + str(data.shape))
 
         target = pd.DataFrame(data=data, columns=['PRICE'])
         data = pd.DataFrame(data=data, columns=[
-            'property_type_Condo/Co-op',
-            'property_type_Single Family Residential',
-            'property_type_Townhouse',
-            #'zip',
+            # 'property_type_Condo/Co-op',
+            # 'property_type_Single Family Residential',
+            # 'property_type_Townhouse',
+            'zip',
             'beds',
             'baths',
             'sq_ft',
@@ -127,16 +127,16 @@ class PredictPriceKNNModel:
                                            n_estimators=5, n_jobs=-1, oob_score=False, random_state=None,
                                            verbose=0, warm_start=False)
         regression.fit(X_train, y_train.values.ravel())
-        predict_property_price = self.get_pd_for_predict_price(zip_code, beds, baths, square_feet , year_build, price_per_sq_ft)
+        predict_property_price = self.get_pd_for_predict_price(zip_code, beds, baths, square_feet , year_build)
         predictions=regression.predict(predict_property_price)
         return predictions
 
-    def get_pd_for_predict_price(self, zip_code, beds, baths, square_feet, year_build, price_per_sq_ft):
+    def get_pd_for_predict_price(self, zip_code, beds, baths, square_feet, year_build):
         dict_predict_property = {
-            'property_type_Condo/Co-op':[1],
-            'property_type_Single Family Residential':[0],
-            'property_type_Townhouse': [0],
-            #'zip': [zip_code],
+            # 'property_type_Condo/Co-op':[1],
+            # 'property_type_Single Family Residential':[0],
+            # 'property_type_Townhouse': [0],
+            'zip': [zip_code],
             'beds': [beds],
             'baths': [baths],
             'sq_ft': [square_feet],
@@ -162,6 +162,6 @@ class PredictPriceKNNModel:
 
 if __name__ == '__main__':
     model = PredictPriceKNNModel()
-    predicted_price = model.customized_train_model(zip_code=94539, beds=1, baths=1, square_feet=665, year_build=1984, price_per_sq_ft="750" )
+    predicted_price = model.customized_train_model(zip_code=94539, beds=1, baths=1, square_feet=665, year_build=1984)
     print "The predicted price for parameterized property is" + str(predicted_price)
     print type(str(predicted_price))
