@@ -99,9 +99,9 @@ class PredictPriceKNNModel:
 
         target = pd.DataFrame(data=data, columns=['PRICE'])
         data = pd.DataFrame(data=data, columns=[
-            # 'property_type_Condo/Co-op',
-            # 'property_type_Single Family Residential',
-            # 'property_type_Townhouse',
+            'property_type_Condo/Co-op',
+            'property_type_Single Family Residential',
+            'property_type_Townhouse',
             'zip',
             'beds',
             'baths',
@@ -133,9 +133,9 @@ class PredictPriceKNNModel:
 
     def get_pd_for_predict_price(self, zip_code, beds, baths, square_feet, year_build):
         dict_predict_property = {
-            # 'property_type_Condo/Co-op':[1],
-            # 'property_type_Single Family Residential':[0],
-            # 'property_type_Townhouse': [0],
+            'property_type_Condo/Co-op':[1],
+            'property_type_Single Family Residential':[0],
+            'property_type_Townhouse': [0],
             'zip': [zip_code],
             'beds': [beds],
             'baths': [baths],
