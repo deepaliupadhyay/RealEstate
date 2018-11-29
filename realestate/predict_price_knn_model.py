@@ -77,15 +77,15 @@ class PredictPriceKNNModel:
         # now drop the original 'country' column (you don't need it anymore)
         data.drop(['property_type'], axis=1, inplace=True)
 
-        # One-hot encoding
-        data = pd.concat([data, pd.get_dummies(data['cost_of_living'], prefix='cost_of_living')], axis=1)
-        # now drop the original 'country' column (you don't need it anymore)
-        data.drop(['cost_of_living'], axis=1, inplace=True)
-
-        # One-hot encoding
-        data = pd.concat([data, pd.get_dummies(data['Weather'], prefix='Weather')], axis=1)
-        # now drop the original 'country' column (you don't need it anymore)
-        data.drop(['Weather'], axis=1, inplace=True)
+        # # One-hot encoding
+        # data = pd.concat([data, pd.get_dummies(data['cost_of_living'], prefix='cost_of_living')], axis=1)
+        # # now drop the original 'country' column (you don't need it anymore)
+        # data.drop(['cost_of_living'], axis=1, inplace=True)
+        #
+        # # One-hot encoding
+        # data = pd.concat([data, pd.get_dummies(data['Weather'], prefix='Weather')], axis=1)
+        # # now drop the original 'country' column (you don't need it anymore)
+        # data.drop(['Weather'], axis=1, inplace=True)
 
         return data
 
