@@ -132,7 +132,7 @@ def housedata():
     query = {"BOUNDARY": {
         "$nearSphere": {"$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
                         "$maxDistance": 8000}}}
-    query.update({'property_type': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
+    query.update({'PROPERTY TYPE': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
     if baths != None:
         operator = op.get(baths_op);
@@ -225,7 +225,7 @@ def getData():
 
     query = {}
     op = {'lt':'$lt', 'gt':'$gt', 'eq': '$eq'}
-    query.update({'property_type': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
+    query.update({'PROPERTY TYPE': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
 
     if baths != None:
         operator = op.get(baths_op);
