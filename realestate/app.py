@@ -122,6 +122,8 @@ def housedata():
     min_sqft = request.args.get('min_sqft')
     max_sqft = request.args.get('max_sqft')
     skip_rec = request.args.get('skip')
+    sortv = request.args.get('sortv')
+    sort_by = request.args.get('sort_by')
 
     client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
@@ -138,12 +140,12 @@ def housedata():
     if baths != None:
         operator = op.get(baths_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'BATHS': {operator: baths}})
+        query.update({'BATHS': {operator: float(baths)}})
 
     if beds != None:
         operator = op.get(beds_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'BEDS': {operator: beds}})
+        query.update({'BEDS': {operator: float(beds)}})
 
     # if min_price != None && max_price != None
 
@@ -181,7 +183,20 @@ def housedata():
 
 
     no_of_rec_to_skip = int(skip_rec)
-    property = mycol.find(query, {"_id": 0 }).skip(no_of_rec_to_skip).limit(15)
+    print query
+
+    if sortv!= None:
+        if sortv == 'price':
+            property = [data for data in mycol.find(query, {"_id": 0}).sort([("PRICE", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
+        elif sortv == 'beds':
+            property = [data for data in mycol.find(query, {"_id": 0}).sort([("BEDS", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
+        elif sortv == 'baths':
+            property = [data for data in mycol.find(query, {"_id": 0}).sort([("BATHS", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
+        elif sortv == 'sqft':
+            property = [data for data in mycol.find(query, {"_id": 0}).sort([("SQUARE FEET", int(sort_by))]).skip(no_of_rec_to_skip).limit(15)]
+    else:
+        property = [data for data in mycol.find(query, {"_id": 0}).skip(no_of_rec_to_skip).limit(15)]
+    #property = mycol.find(query, {"_id": 0 }).skip(no_of_rec_to_skip).limit(15)
     pprint(property)
 
     result = []
@@ -231,12 +246,12 @@ def getData():
     if baths != None:
         operator = op.get(baths_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'BATHS': {operator: baths}})
+        query.update({'BATHS': {operator: float(baths)}})
 
     if beds != None:
         operator = op.get(beds_op);
         print "selected operator {}".format('$' + "operator")
-        query.update({'BEDS': {operator: beds}})
+        query.update({'BEDS': {operator: float(beds)}})
 
     if min_price != None and max_price != None:
         operator1 = op.get('gt');

@@ -172,7 +172,7 @@ class PredictPriceKNNModel:
             'year_built': [year_build],
             'Livability': [val['Livability']]#,
             #'price_per_sq_ft': [str(price_per_sq_ft)]
-
+            #
             # {
             #     "BEDS": 1,
             #     "YEAR BUILT": "1984",
