@@ -121,6 +121,7 @@ def housedata():
     max_price = request.args.get('max_price')
     min_sqft = request.args.get('min_sqft')
     max_sqft = request.args.get('max_sqft')
+    skip_rec = request.args.get('skip')
 
     client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
                                  ssl_cert_reqs=ssl.CERT_REQUIRED,
@@ -179,15 +180,15 @@ def housedata():
         query.update({'SQUARE FEET': {operator: float(max_sqft)}})
 
 
-
-    property = mycol.find(query, {"_id": 0 }).limit(15)
+    no_of_rec_to_skip = int(skip_rec)
+    property = mycol.find(query, {"_id": 0 }).skip(no_of_rec_to_skip).limit(15)
     pprint(property)
 
     result = []
     for document in property:
        result.append(document)
 
-    # img_helper.get_images_for_property(result)
+    result = img_helper.get_images_for_property(result)
 
     pprint(result)
 
