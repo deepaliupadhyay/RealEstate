@@ -46,6 +46,8 @@ def getOneArticle():
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
 
     query = {"ZIP": zipcode}
+    query.update({'PROPERTY TYPE': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
+
     if baths != None:
         operator = op.get(baths_op);
         print "selected operator {}".format('$' + "operator")
@@ -130,7 +132,7 @@ def housedata():
     query = {"BOUNDARY": {
         "$nearSphere": {"$geometry": {"type": "Point", "coordinates": [float(longitude), float(latitude)]},
                         "$maxDistance": 8000}}}
-
+    query.update({'property_type': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
     op = {'lt': '$lt', 'gt': '$gt', 'eq': '$eq'}
     if baths != None:
         operator = op.get(baths_op);
@@ -223,6 +225,8 @@ def getData():
 
     query = {}
     op = {'lt':'$lt', 'gt':'$gt', 'eq': '$eq'}
+    query.update({'property_type': {"$in": ['Single Family Residential', 'Townhouse', 'Condo/Co-op']}})
+
     if baths != None:
         operator = op.get(baths_op);
         print "selected operator {}".format('$' + "operator")
@@ -298,11 +302,12 @@ def getPricePrediction():
     sq_ft = request.args.get('sq_ft')
     year_built = request.args.get('year_built')
     baths =request.args.get('baths')
+    property_type = request.args.get('property_type')
 
 
     model = PredictPriceKNNModel()
     predicted_price = model.customized_train_model(zip_code=zip, beds=beds, baths=baths, square_feet=sq_ft,
-                                                   year_build=year_built)
+                                                   year_build=year_built, property_type=property_type)
     print "The predicted price for parameterized property is" + str(predicted_price)
     print type(str(predicted_price))
     predicted_price=round(predicted_price,2)

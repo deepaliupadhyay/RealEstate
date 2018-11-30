@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
+import pymongo
 import os
+import ssl
+import certifi
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import train_test_split
 import sys
@@ -17,6 +20,7 @@ from sklearn.preprocessing import QuantileTransformer, quantile_transform
 
 
 
+
 class PredictPriceKNNModel:
     modified_file_path = ""
 
@@ -27,7 +31,7 @@ class PredictPriceKNNModel:
 
 
 
-    def read_data(self, square_feet_var):
+    def read_data(self, square_feet_var, beds_var):
         file_name = os.path.join(os.getcwd(), "price_prediction_data_v1.csv")
 
         print("Path to access csv file to train model" + file_name)
@@ -54,15 +58,16 @@ class PredictPriceKNNModel:
 
         data = data.loc[data['STATE'] == 'CA'].copy()
         data = data.loc[(data['zip'] > 90500) & (data['zip'] < 96000)].copy()
-        data = data.loc[(data['beds'] < 7)].copy()
+        #data = data.loc[(data['beds'] < 7)].copy()
+        data = data.loc[(data['beds'] <= int(beds_var)+1)].copy()
         data = data.loc[(data['baths'] >= 1) & (data['baths'] <= 6)].copy()
         data = data.loc[(data['year_built'] > 1950)].copy()
         data = data.loc[(data['PRICE'] > 80000) & (data['PRICE'] < 4000000)].copy()
         data = data.loc[
             (data['property_type'] == 'Single Family Residential') | (data['property_type'] == 'Townhouse') | (
                         data['property_type'] == 'Condo/Co-op')].copy()
-        data = data.loc[(data['sq_ft'] < 4400)].copy()
-        #data = data.loc[(data['sq_ft'] < float(square_feet_var) + 200)].copy()
+        #data = data.loc[(data['sq_ft'] < 4400)].copy()
+        data = data.loc[(data['sq_ft'] <= float(square_feet_var) + 200)].copy()
 
 
         print("Records after Winsoring - {0}".format(data.shape))
@@ -92,8 +97,8 @@ class PredictPriceKNNModel:
         return data
 
 
-    def customized_train_model(self, zip_code, beds, baths, square_feet, year_build):
-        data = self.read_data(square_feet)
+    def customized_train_model(self, zip_code, beds, baths, square_feet, year_build, property_type):
+        data = self.read_data(square_feet, beds)
 
         print("Finally total number of records to be used for train model" + str(data.shape))
 
@@ -124,16 +129,27 @@ class PredictPriceKNNModel:
                                            max_leaf_nodes=None, min_impurity_decrease=0.0,
                                            min_impurity_split=None, min_samples_leaf=3,
                                            min_samples_split=8, min_weight_fraction_leaf=0.0,
-                                           n_estimators=5, n_jobs=-1, oob_score=False, random_state=None,
+                                           n_estimators=5, n_jobs=1, oob_score=False, random_state=None,
                                            verbose=0, warm_start=False)
         regression.fit(X_train, y_train.values.ravel())
-        predict_property_price = self.get_pd_for_predict_price(zip_code, beds, baths, square_feet , year_build)
+        predict_property_price = self.get_pd_for_predict_price(zip_code, beds, baths, square_feet, year_build, property_type)
         predictions=regression.predict(predict_property_price)
         return predictions
 
-    def get_pd_for_predict_price(self, zip_code, beds, baths, square_feet, year_build):
+    def get_pd_for_predict_price(self, zip_code, beds, baths, square_feet, year_build, property_type):
+        client = pymongo.MongoClient("mongodb://du1982:forgot@realestate-shard-00-01-pazv8.mongodb.net",
+                                     ssl_cert_reqs=ssl.CERT_REQUIRED,
+                                     ssl_ca_certs=certifi.where())
+        mydb = client.realestate
+        mycol = mydb["sideData"]
+        get_liv = mycol.find({'zip': zip_code},{"_id" : 0, "Livability":1 })
+        print get_liv
+        val = get_liv.next()
+        print type(val)
+        print val['Livability']
+
         dict_predict_property = {
-            'property_type_Condo/Co-op':[1],
+            'property_type_Condo/Co-op':[0],
             'property_type_Single Family Residential':[0],
             'property_type_Townhouse': [0],
             #'zip': [zip_code],
@@ -141,7 +157,7 @@ class PredictPriceKNNModel:
             'baths': [baths],
             'sq_ft': [square_feet],
             'year_built': [year_build],
-            'Livability': [74]#,
+            'Livability': [val['Livability']]#,
             #'price_per_sq_ft': [str(price_per_sq_ft)]
 
             # {
@@ -155,6 +171,8 @@ class PredictPriceKNNModel:
             #     "PROPERTY TYPE": "Condo/Co-op"
             # }
         }
+        keyToSet1 = "property_type_" + property_type
+        dict_predict_property[keyToSet1] = [1]
 
         pd_predict_property = pd.DataFrame.from_dict(dict_predict_property)
         return pd_predict_property
@@ -162,6 +180,6 @@ class PredictPriceKNNModel:
 
 if __name__ == '__main__':
     model = PredictPriceKNNModel()
-    predicted_price = model.customized_train_model(zip_code=94539, beds=1, baths=1, square_feet=665, year_build=1984)
+    predicted_price = model.customized_train_model(zip_code=94539, beds=1, baths=1, square_feet=665, year_build=1984, property_type="Condo/Co-op")
     print "The predicted price for parameterized property is" + str(predicted_price)
     print type(str(predicted_price))
