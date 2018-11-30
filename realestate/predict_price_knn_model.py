@@ -142,9 +142,22 @@ class PredictPriceKNNModel:
                                      ssl_ca_certs=certifi.where())
         mydb = client.realestate
         mycol = mydb["sideData"]
-        get_liv = mycol.find({'zip': zip_code},{"_id" : 0, "Livability":1 })
-        print get_liv
-        val = get_liv.next()
+        get_cnt = mycol.find({'zip': zip_code},{"_id" : 0, "Livability":1 }).count()
+        print get_cnt
+        if get_cnt == 0:
+        #print get_liv.next()
+        #val = get_liv.next()
+
+            val = {'Livability': 80}
+        else:
+            get_liv = mycol.find({'zip': zip_code}, {"_id": 0, "Livability": 1})
+            val = get_liv.next()
+        #
+        # else:
+        #     print 'No Value found'
+        #     #val = get_liv.next()
+        #
+        #     #val = {'Livability':80}
         print type(val)
         print val['Livability']
 
