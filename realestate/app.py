@@ -205,15 +205,15 @@ def housedata():
 
     result = img_helper.get_images_for_property(result)
 
-    pprint(result)
+    # pprint(result)
+    #
+    # if property:
+    #  textline = result
+    # 
+    # else:
+    #  textline = "no results"
 
-    if property:
-     textline = result
-
-    else:
-     textline = "no results"
-
-    return Response(json.dumps(textline), mimetype='application/json')
+    return Response(json.dumps(result), mimetype='application/json')
 
 
 @app.route('/data')
