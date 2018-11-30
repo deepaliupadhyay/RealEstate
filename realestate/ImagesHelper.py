@@ -32,7 +32,9 @@ class ImageHelper:
                 folders.append(files)
 
         # selected_property_directory = random.choice(folders)
-        if beds <=3:
+        if beds <=1:
+            selected_property_directory = "house1"
+        elif beds <=3 and beds>1 :
             selected_property_directory = "house"+str(beds)
         else:
             selected_property_directory = "house4"
